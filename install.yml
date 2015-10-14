@@ -6,6 +6,7 @@
   vars:
     nginx_apt_key: "http://nginx.org/keys/nginx_signing.key"
     ajenti_apt_key: "http://repo.ajenti.org/debian/key"
+    nginx_proxmox_conf: "proxmox"
 
   handlers:
     - name: restart nginx
@@ -58,9 +59,8 @@
     - name: Auto include Nginx files from sites-enabled
       lineinfile:
         dest=/etc/nginx/nginx.conf
-        insertafter="include /etc/nginx/conf\.d/\*\.conf;"
+        regexp="include /etc/nginx/conf\.d/\*\.conf;"
         line="    include /etc/nginx/sites-enabled/*;"
-        state=present
       notify:
         - restart nginx
 
@@ -74,7 +74,7 @@
     - name: Add Nginx host config from template
       template:
         src=template_nginx_host.j2
-        dest=/etc/nginx/sites-available/host
+        dest="/etc/nginx/sites-available/{{ nginx_proxmox_conf }}"
 
     - name: Link Nginx config to sites-enable
       file:
@@ -82,7 +82,7 @@
         dest="/etc/nginx/sites-enabled/{{ item }}"
         state=link
       with_items:
-        - host
+        - "{{ nginx_proxmox_conf }}"
       notify:
         - restart nginx
 
