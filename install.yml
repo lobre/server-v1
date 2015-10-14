@@ -48,6 +48,44 @@
       notify:
         - restart nginx
 
+    - name: Create Nginx conf directories
+      file: path="/etc/nginx/{{ item }}" state=directory
+      with_items:
+        - ssl
+        - sites-available
+        - sites-enabled
+
+    - name: Auto include Nginx files from sites-enabled
+      lineinfile:
+        dest=/etc/nginx/nginx.conf
+        insertafter="include /etc/nginx/conf\.d/\*\.conf;"
+        line="    include /etc/nginx/sites-enabled/*;"
+        state=present
+      notify:
+        - restart nginx
+
+    - name: Generate self signed SSL certificate
+      command:
+        openssl req -new -nodes -x509 -subj "/C=FR/ST=France/L=Lyon/O=lobr/CN={{ inventory_hostname }}" -days 3650 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca
+        creates=/etc/nginx/ssl/server.crt
+      notify:
+        - restart nginx
+
+    - name: Add Nginx host config from template
+      template:
+        src=template_nginx_host.j2
+        dest=/etc/nginx/sites-available/host
+
+    - name: Link Nginx config to sites-enable
+      file:
+        src="/etc/nginx/sites-available/{{ item }}"
+        dest="/etc/nginx/sites-enabled/{{ item }}"
+        state=link
+      with_items:
+        - host
+      notify:
+        - restart nginx
+
     - name: Add Ajenti apt key
       apt_key: url={{ ajenti_apt_key }} state=present
 
@@ -64,10 +102,10 @@
       notify:
         - restart ajenti
 
-    - name: Import Debian 8 template
+    - name: Import Debian 8 templates
       get_url:
-       url="{{ item }}"
+       url="http://download.openvz.org/template/precreated/{{ item }}"
        dest=/var/lib/vz/template/cache/
       with_items:
-        - "http://download.openvz.org/template/precreated/debian-8.0-x86_64.tar.gz"
-        - "http://download.openvz.org/template/precreated/debian-8.0-x86_64-minimal.tar.gz"
+        - "debian-8.0-x86_64.tar.gz"
+        - "debian-8.0-x86_64-minimal.tar.gz"
