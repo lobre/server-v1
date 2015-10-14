@@ -1,0 +1,73 @@
+---
+
+- hosts: host
+  remote_user: root
+
+  vars:
+    nginx_apt_key: "http://nginx.org/keys/nginx_signing.key"
+    ajenti_apt_key: "http://repo.ajenti.org/debian/key"
+
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
+    - name: restart ajenti
+      service: name=ajenti state=restarted
+
+  pre_tasks:
+    - name: Remove PVE Enterprise repo
+      file:
+        path=/etc/apt/sources.list.d/pve-enterprise.list
+        state=absent
+
+    - name: Update apt cache if needed
+      apt: update_cache=yes cache_valid_time=3600
+
+    - name: Remove Proxmox subscription message
+      replace:
+        dest=/usr/share/pve-manager/ext4/pvemanagerlib.js
+        regexp="data.status !== 'Active'"
+        replace="false"
+
+  tasks:
+    - name: Add Nginx apt key
+      apt_key: url={{ nginx_apt_key }} state=present
+
+    - name: Add Nginx apt repo
+      apt_repository:
+        repo="{{ item }}"
+        state=present
+        update_cache=yes
+      with_items:
+        - "deb http://nginx.org/packages/debian/ wheezy nginx"
+        - "deb-src http://nginx.org/packages/debian/ wheezy nginx"
+
+    - name: Install Nginx
+      apt: name={{ item }} state=present
+      with_items:
+        - nginx
+      notify:
+        - restart nginx
+
+    - name: Add Ajenti apt key
+      apt_key: url={{ ajenti_apt_key }} state=present
+
+    - name: Add Ajenti apt repo
+      apt_repository:
+        repo="deb http://repo.ajenti.org/debian main main debian"
+        state=present
+        update_cache=yes
+
+    - name: Install Ajenti
+      apt: name={{ item }} state=present
+      with_items:
+        - ajenti
+      notify:
+        - restart ajenti
+
+    - name: Import Debian 8 template
+      get_url:
+       url="{{ item }}"
+       dest=/var/lib/vz/template/cache/
+      with_items:
+        - "http://download.openvz.org/template/precreated/debian-8.0-x86_64.tar.gz"
+        - "http://download.openvz.org/template/precreated/debian-8.0-x86_64-minimal.tar.gz"
