@@ -16,7 +16,7 @@
 
   pre_tasks:
     - name: Remove PVE Enterprise repo
-      file:
+      file: >
         path=/etc/apt/sources.list.d/pve-enterprise.list
         state=absent
 
@@ -24,7 +24,7 @@
       apt: update_cache=yes cache_valid_time=3600
 
     - name: Remove Proxmox subscription message
-      replace:
+      replace: >
         dest=/usr/share/pve-manager/ext4/pvemanagerlib.js
         regexp="data.status !== 'Active'"
         replace="false"
@@ -34,7 +34,7 @@
       apt_key: url={{ nginx_apt_key }} state=present
 
     - name: Add Nginx apt repo
-      apt_repository:
+      apt_repository: >
         repo="{{ item }}"
         state=present
         update_cache=yes
@@ -57,10 +57,11 @@
         - sites-enabled
 
     - name: Auto include Nginx files from sites-enabled
-      lineinfile:
+      lineinfile: >
         dest=/etc/nginx/nginx.conf
-        regexp="include /etc/nginx/conf\.d/\*\.conf;"
-        line="    include /etc/nginx/sites-enabled/*;"
+        regexp="^( *)include /etc/nginx/conf\.d/\*\.conf;"
+        line="\1include /etc/nginx/sites-enabled/*;"
+        backrefs=yes
       notify:
         - restart nginx
 
@@ -72,12 +73,12 @@
         - restart nginx
 
     - name: Add Nginx host config from template
-      template:
+      template: >
         src=template_nginx_host.j2
         dest="/etc/nginx/sites-available/{{ nginx_proxmox_conf }}"
 
     - name: Link Nginx config to sites-enable
-      file:
+      file: >
         src="/etc/nginx/sites-available/{{ item }}"
         dest="/etc/nginx/sites-enabled/{{ item }}"
         state=link
@@ -90,7 +91,7 @@
       apt_key: url={{ ajenti_apt_key }} state=present
 
     - name: Add Ajenti apt repo
-      apt_repository:
+      apt_repository: >
         repo="deb http://repo.ajenti.org/debian main main debian"
         state=present
         update_cache=yes
@@ -105,7 +106,7 @@
     - name: Import Debian 8 templates
       get_url:
        url="http://download.openvz.org/template/precreated/{{ item }}"
-       dest=/var/lib/vz/template/cache/
+       dest="/var/lib/vz/template/cache/{{ item }}"
       with_items:
         - "debian-8.0-x86_64.tar.gz"
         - "debian-8.0-x86_64-minimal.tar.gz"
