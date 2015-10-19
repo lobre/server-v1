@@ -1,0 +1,32 @@
+---
+
+- hosts: "{{ host }}"
+  remote_user: "{{ remote_usr }}"
+
+  vars_files:
+    - ../vars.yml
+
+  handlers:
+    - name: restart ajenti
+      service: name=ajenti state=restarted
+
+  pre_tasks:
+    - name: Update apt cache if needed
+      apt: update_cache=yes cache_valid_time=3600
+
+  tasks:
+    - name: Add Ajenti apt key
+      apt_key: url={{ ajenti_apt_key }} state=present
+
+    - name: Add Ajenti apt repo
+      apt_repository: >
+        repo="{{ ajenti_repo }}"
+        state=present
+        update_cache=yes
+
+    - name: Install Ajenti
+      apt: name={{ item }} state=present
+      with_items:
+        - ajenti
+      notify:
+        - restart ajenti

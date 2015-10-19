@@ -1,0 +1,29 @@
+---
+
+- hosts: "{{ host }}"
+  remote_user: "{{ remote_usr }}"
+
+  vars_files:
+    - ../vars.yml
+
+  pre_tasks:
+    - name: Remove PVE Enterprise repo
+      file: >
+        path=/etc/apt/sources.list.d/pve-enterprise.list
+        state=absent
+
+    - name: Remove Proxmox subscription message
+      replace: >
+        dest=/usr/share/pve-manager/ext4/pvemanagerlib.js
+        regexp="data.status !== 'Active'"
+        replace="false"
+
+  tasks:
+    - name: Import Debian 8 templates
+      get_url:
+       url="http://download.openvz.org/template/precreated/{{ item }}"
+       dest="/var/lib/vz/template/cache/{{ item }}"
+      with_items: "{{ proxmox_templates }}"
+
+- include: nginx.yml
+- include: ajenti.yml

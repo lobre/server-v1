@@ -1,33 +1,18 @@
 ---
 
-- hosts: host
-  remote_user: root
+- hosts: "{{ host }}"
+  remote_user: "{{ remote_usr }}"
 
-  vars:
-    nginx_apt_key: "http://nginx.org/keys/nginx_signing.key"
-    ajenti_apt_key: "http://repo.ajenti.org/debian/key"
-    nginx_proxmox_conf: "proxmox"
+  vars_files:
+    - ../vars.yml
 
   handlers:
     - name: restart nginx
       service: name=nginx state=restarted
-    - name: restart ajenti
-      service: name=ajenti state=restarted
 
   pre_tasks:
-    - name: Remove PVE Enterprise repo
-      file: >
-        path=/etc/apt/sources.list.d/pve-enterprise.list
-        state=absent
-
     - name: Update apt cache if needed
       apt: update_cache=yes cache_valid_time=3600
-
-    - name: Remove Proxmox subscription message
-      replace: >
-        dest=/usr/share/pve-manager/ext4/pvemanagerlib.js
-        regexp="data.status !== 'Active'"
-        replace="false"
 
   tasks:
     - name: Add Nginx apt key
@@ -38,9 +23,7 @@
         repo="{{ item }}"
         state=present
         update_cache=yes
-      with_items:
-        - "deb http://nginx.org/packages/debian/ wheezy nginx"
-        - "deb-src http://nginx.org/packages/debian/ wheezy nginx"
+      with_items: "{{ nginx_repos }}"
 
     - name: Install Nginx
       apt: name={{ item }} state=present
@@ -74,39 +57,16 @@
 
     - name: Add Nginx host config from template
       template: >
-        src=template_nginx_host.j2
-        dest="/etc/nginx/sites-available/{{ nginx_proxmox_conf }}"
+        src=../templates/nginx_{{ item }}.j2
+        dest="/etc/nginx/sites-available/{{ item }}"
+      with_items: "{{ nginx_confs }}"
 
     - name: Link Nginx config to sites-enable
       file: >
         src="/etc/nginx/sites-available/{{ item }}"
         dest="/etc/nginx/sites-enabled/{{ item }}"
         state=link
-      with_items:
-        - "{{ nginx_proxmox_conf }}"
+      with_items: "{{ nginx_confs }}"
       notify:
         - restart nginx
 
-    - name: Add Ajenti apt key
-      apt_key: url={{ ajenti_apt_key }} state=present
-
-    - name: Add Ajenti apt repo
-      apt_repository: >
-        repo="deb http://repo.ajenti.org/debian main main debian"
-        state=present
-        update_cache=yes
-
-    - name: Install Ajenti
-      apt: name={{ item }} state=present
-      with_items:
-        - ajenti
-      notify:
-        - restart ajenti
-
-    - name: Import Debian 8 templates
-      get_url:
-       url="http://download.openvz.org/template/precreated/{{ item }}"
-       dest="/var/lib/vz/template/cache/{{ item }}"
-      with_items:
-        - "debian-8.0-x86_64.tar.gz"
-        - "debian-8.0-x86_64-minimal.tar.gz"

@@ -1,0 +1,28 @@
+---
+
+# General
+remote_usr: root
+host: host
+containers:
+  - prefix: "blog"
+    has_web: yes
+    address: "10.0.0.3:80"
+    is_ssl: no
+
+# Provision playbook
+proxmox_templates:
+ - "debian-8.0-x86_64.tar.gz"
+ - "debian-8.0-x86_64-minimal.tar.gz"
+
+# Nginx playbook
+nginx_apt_key: "http://nginx.org/keys/nginx_signing.key"
+nginx_repos:
+  - "deb http://nginx.org/packages/debian/ wheezy nginx"
+  - "deb-src http://nginx.org/packages/debian/ wheezy nginx"
+nginx_confs:
+  - "proxmox"
+  - "containers"
+
+# Ajenti playbook
+ajenti_apt_key: "http://repo.ajenti.org/debian/key"
+ajenti_repo: "deb http://repo.ajenti.org/debian main main debian"
