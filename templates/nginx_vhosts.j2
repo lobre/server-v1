@@ -1,16 +1,16 @@
-{% for container in containers %}
-{% if container.has_web %}
+{% for vhost in vhosts %}
+{% if vhost.has_web %}
 server {
-    {{ 'listen 443;' if container.is_ssl else 'listen 80;' }}
-    server_name {{ container.prefix }}.lobr.fr;
-{% if container.is_ssl %}
+    {{ 'listen 443;' if vhost.is_ssl else 'listen 80;' }}
+    server_name {{ vhost.prefix }}.lobr.fr;
+{% if vhost.is_ssl %}
     ssl on;
     ssl_certificate /etc/nginx/ssl/server.crt;
     ssl_certificate_key /etc/nginx/ssl/server.key;
 {% endif %}
     proxy_redirect off;
     location / {
-        proxy_pass http{{ 's' if container.is_ssl else '' }}://{{ container.address }};
+        proxy_pass http{{ 's' if vhost.is_ssl else '' }}://{{ vhost.address }}:{{ vhost.port }};
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $host;

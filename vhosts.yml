@@ -1,0 +1,8 @@
+---
+
+vhosts:
+  - prefix: "blog"
+    has_web: yes
+    address: "10.0.0.3"
+    port: "80"
+    is_ssl: no
