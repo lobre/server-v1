@@ -1,8 +1,11 @@
 ---
 
 vhosts:
-  - prefix: "blog"
-    has_web: yes
-    address: "10.0.0.3"
-    port: "80"
-    is_ssl: no
+  - address: "10.0.0.3"
+    web:
+      - prefix: "blog"
+        dest: "80"
+        is_ssl: yes
+    nat:
+      - src: "1003"
+        dest: "22"

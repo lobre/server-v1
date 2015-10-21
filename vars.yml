@@ -4,12 +4,12 @@
 remote_usr: root
 host: host
 
-# Provision playbook
+# Proxmox
 proxmox_templates:
  - "debian-8.0-x86_64.tar.gz"
  - "debian-8.0-x86_64-minimal.tar.gz"
 
-# Nginx playbook
+# Nginx
 nginx_apt_key: "http://nginx.org/keys/nginx_signing.key"
 nginx_repos:
   - "deb http://nginx.org/packages/debian/ wheezy nginx"
@@ -18,6 +18,10 @@ nginx_conf_files:
   - "host"
   - "vhosts"
 
-# Ajenti playbook
+# Ajenti
 ajenti_apt_key: "http://repo.ajenti.org/debian/key"
 ajenti_repo: "deb http://repo.ajenti.org/debian main main debian"
+
+# Firewall
+network_address: "10.0.0.0"
+cidr_mask: "24"

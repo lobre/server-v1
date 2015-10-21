@@ -6,3 +6,16 @@
   vars_files:
     - ../vars.yml
     - ../vhosts.yml
+
+  tasks:
+    - name: Flush iptables NAT rules
+      command: "iptables -t nat -F"
+
+    - name: Allow vhosts internet access through SNAT
+      command: "iptables -t nat -A POSTROUTING -s {{ network_address }}/{{ cidr_mask }} -o {{ ansible_default_ipv4.interface }} -j SNAT --to {{ ansible_default_ipv4.address }}"
+
+    - name: Set vhost NAT rules
+      command: "iptables -t nat -A PREROUTING -i {{ ansible_default_ipv4.interface }} -p tcp --dport {{ item.1.src }} -j DNAT --to {{ item.0.address }}:{{ item.1.dest }}"
+      with_subelements:
+        - vhosts
+        - nat

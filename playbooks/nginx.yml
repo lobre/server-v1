@@ -51,7 +51,7 @@
 
     - name: Generate self signed SSL certificate
       command:
-        openssl req -new -nodes -x509 -subj "/C=FR/ST=France/L=Lyon/O=lobr/CN={{ inventory_hostname }}" -days 3650 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca
+        openssl req -new -nodes -x509 -subj "/C=FR/ST=France/L=Lyon/O=lobr/CN=*.{{ inventory_hostname }} subjectAltName=DNS.1={{ inventory_hostname }}" -days 3650 -keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -extensions v3_ca
         creates=/etc/nginx/ssl/server.crt
       notify:
         - restart nginx
@@ -61,8 +61,10 @@
         src=../templates/nginx_{{ item }}.j2
         dest="/etc/nginx/sites-available/{{ item }}"
       with_items: "{{ nginx_conf_files }}"
+      notify:
+        - restart nginx
 
-    - name: Link Nginx config to sites-enable
+    - name: Link Nginx config to sites-enabled
       file: >
         src="/etc/nginx/sites-available/{{ item }}"
         dest="/etc/nginx/sites-enabled/{{ item }}"
