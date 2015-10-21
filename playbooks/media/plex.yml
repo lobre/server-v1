@@ -1,0 +1,33 @@
+---
+
+- hosts: media
+  remote_user: root
+
+  vars_files:
+    - ../../vars.yml
+
+  handlers:
+    - name: restart plex
+      service: name=plexmediaserver state=restarted
+
+  pre_tasks:
+    - name: Update apt cache if needed
+      apt: update_cache=yes cache_valid_time=3600
+
+  tasks:
+    - name: Add Plex apt key
+      apt_key: url={{ plex_apt_key }} state=present
+
+    - name: Add Plex apt repo
+      apt_repository: >
+        repo="{{ item }}"
+        state=present
+        update_cache=yes
+      with_items: "{{ plex_repo }}"
+
+    - name: Install Plex
+      apt: name={{ item }} state=present
+      with_items:
+        - plexmediaserver
+      notify:
+        - restart plex

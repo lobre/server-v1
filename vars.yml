@@ -25,3 +25,7 @@ ajenti_repo: "deb http://repo.ajenti.org/debian main main debian"
 # Firewall
 network_address: "10.0.0.0"
 cidr_mask: "24"
+
+# Plex
+plex_apt_key: "http://shell.ninthgate.se/packages/shell-ninthgate-se-keyring.key"
+plex_repo: "deb http://shell.ninthgate.se/packages/debian wheezy main"

@@ -1,0 +1,5 @@
+[host]
+lobr.fr
+
+[vhosts]
+media ansible_ssh_port=1001 ansible_ssh_host=lobr.fr

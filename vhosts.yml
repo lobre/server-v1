@@ -1,11 +1,11 @@
 ---
 
 vhosts:
-  - address: "10.0.0.3"
+  - address: "10.0.0.1"
     web:
-      - prefix: "blog"
-        dest: "80"
+      - prefix: "media"
+        dest: "32400"
         is_ssl: no
     nat:
-      - src: "1003"
+      - src: "1001"
         dest: "22"
