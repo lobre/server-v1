@@ -12,7 +12,7 @@ server {
 # Redirect chosen domain to https
 server {
     listen 80;
-    server_name lobr.fr proxmox.lobr.fr{% for vhost in vhosts %}{% for domain in vhost.web %}{{ " " ~ domain.prefix ~ ".lobr.fr" if domain.is_ssl else '' }}{% endfor %}{% endfor %};
+    server_name panel.lobr.fr proxmox.lobr.fr{% for vhost in vhosts %}{% for domain in vhost.web %}{{ " " ~ domain.prefix ~ ".lobr.fr" if domain.is_ssl else '' }}{% endfor %}{% endfor %};
     rewrite ^(.*) https://$host$1 permanent;
 }
 

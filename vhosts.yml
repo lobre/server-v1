@@ -5,7 +5,7 @@ vhosts:
     web:
       - prefix: "blog"
         dest: "80"
-        is_ssl: yes
+        is_ssl: no
     nat:
       - src: "1003"
         dest: "22"
