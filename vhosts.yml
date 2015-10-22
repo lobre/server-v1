@@ -6,6 +6,10 @@ vhosts:
       - prefix: "media"
         dest: "32400"
         is_ssl: no
+        custom_config: |
+          if ($http_x_plex_device_name = '') {
+            rewrite ^/$ http://$http_host/web/index.html;
+          }
     nat:
       - src: "1001"
         dest: "22"

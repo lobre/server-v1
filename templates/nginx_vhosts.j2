@@ -9,6 +9,10 @@ server {
     proxy_redirect off;
     location / {
         proxy_pass http://{{ vhost.address }}:{{ domain.dest }};
+
+        {% if domain.custom_config is defined %}
+        {{ domain.custom_config }}
+        {% endif %}
         
         proxy_set_header    Host              $host;
         proxy_set_header    X-Real-IP         $remote_addr;
