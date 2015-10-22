@@ -13,6 +13,10 @@ Then to create containers, create it first from proxmox interface and add then a
           - prefix: "blog"
             dest: "80"
             is_ssl: yes
+            custom_config: |
+              if ($http_x_plex_device_name = '') {
+                rewrite ^/$ http://$http_host/web/index.html;
+              }
         nat:
           - src: "1003"
             dest: "22"
