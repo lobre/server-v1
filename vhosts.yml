@@ -16,3 +16,5 @@ vhosts:
     nat:
       - src: "1001"
         dest: "22"
+      - src: "8112"
+        dest: "8112"
