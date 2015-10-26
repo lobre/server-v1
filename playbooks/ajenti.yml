@@ -1,6 +1,7 @@
 ---
 
-- hosts: "{{ host }}"
+- name: Ajenti
+  hosts: "{{ host }}"
   remote_user: "{{ remote_usr }}"
 
   vars_files:

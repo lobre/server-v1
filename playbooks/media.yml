@@ -1,10 +1,11 @@
 ---
 
-- hosts: media
+- name: Plex
+  hosts: media
   remote_user: root
 
   vars_files:
-    - ../../vars.yml
+    - ../vars.yml
 
   handlers:
     - name: restart plex
@@ -31,3 +32,33 @@
         - plexmediaserver
       notify:
         - restart plex
+
+- name: Deluge
+  hosts: media
+  remote_user: root
+
+  handlers:
+    - name: restart deluge
+      service: name=deluge-web state=restarted
+
+  pre_tasks:
+    - name: Update apt cache if needed
+      apt: update_cache=yes cache_valid_time=3600
+
+  tasks:
+    - name: Install Deluge
+      apt: name={{ item }} state=present
+      with_items:
+        - deluged
+        - deluge-webui
+
+    - name: Create web daemon scripts
+      template: >
+        src="../templates/{{ item.src }}"
+        dest="{{ item.dest }}"
+      with_items:
+        - { src: "deluged_service.j2", dest: "/etc/systemd/system/deluged.service" }
+        - { src: "deluge_web_service.j2", dest: "/etc/systemd/system/deluge-web.service" }
+      notify:
+        - restart deluge
+   

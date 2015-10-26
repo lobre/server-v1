@@ -1,6 +1,7 @@
 ---
 
-- hosts: "{{ host }}"
+- Server host setup
+  hosts: "{{ host }}"
   remote_user: "{{ remote_usr }}"
 
   vars_files:

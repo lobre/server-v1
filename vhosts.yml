@@ -10,6 +10,9 @@ vhosts:
           if ($http_x_plex_device_name = '') {
             rewrite ^/$ http://$http_host/web/index.html;
           }
+      - prefix: "torrent"
+        dest: "8112"
+        is_ssl: yes
     nat:
       - src: "1001"
         dest: "22"
