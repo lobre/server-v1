@@ -29,3 +29,8 @@ cidr_mask: "24"
 # Plex
 plex_apt_key: "http://shell.ninthgate.se/packages/shell-ninthgate-se-keyring.key"
 plex_repo: "deb http://shell.ninthgate.se/packages/debian wheezy main"
+plex_user: "plex"
+plex_group: "plex"
+
+# Media
+media_folder: "/home/media"

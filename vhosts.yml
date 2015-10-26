@@ -18,3 +18,5 @@ vhosts:
         dest: "22"
       - src: "8112"
         dest: "8112"
+      - src: "32400"
+        dest: "32400"
