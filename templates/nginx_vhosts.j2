@@ -8,7 +8,7 @@ server {
 {% endif %}
     proxy_redirect off;
     location / {
-        proxy_pass http://{{ vhost.address }}:{{ domain.dest }};
+        proxy_pass http://{{ vhost.address }}{{ domain.dest }};
 
         {% if domain.custom_config is defined %}
         {{ domain.custom_config }}

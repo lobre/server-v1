@@ -4,14 +4,17 @@ vhosts:
   - address: "10.0.0.1"
     web:
       - prefix: "media"
-        dest: "32400"
+        dest: ":32400"
         is_ssl: yes
         custom_config: |
           if ($http_x_plex_device_name = '') {
             rewrite ^/$ http://$http_host/web/index.html;
           }
       - prefix: "torrent"
-        dest: "8112"
+        dest: ":8112"
+        is_ssl: yes
+      - prefix: "cloud"
+        dest: "/owncloud"
         is_ssl: yes
     nat:
       - src: "1001"

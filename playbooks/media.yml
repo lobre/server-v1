@@ -62,7 +62,34 @@
       notify:
         - restart deluge
 
-- name: Shared folder
+- name: Owncloud
+  hosts: media
+  remote_user: root
+
+  vars_files:
+    - ../vars.yml
+
+  pre_tasks:
+    - name: Update apt cache if needed
+      apt: update_cache=yes cache_valid_time=3600
+
+  tasks:
+    - name: Add Owncloud apt key
+      apt_key: url={{ owncloud_apt_key }} state=present
+
+    - name: Add Owncloud apt repo
+      apt_repository: >
+        repo="{{ item }}"
+        state=present
+        update_cache=yes
+      with_items: "{{ owncloud_repo }}"
+
+    - name: Install Owncloud
+      apt: name={{ item }} state=present
+      with_items:
+        - owncloud
+
+- name: Shared media folders
   hosts: media
   remote_user: root
 
@@ -70,19 +97,16 @@
     - ../vars.yml
 
   tasks:
-    - name: Create media folders
+    - name: Create shared media folders
       file: >
         path="{{ media_folder }}/{{ item }}"
-        owner="{{ plex_user }}"
-        group="{{ plex_group }}"
         state=directory
         recurse=yes
-        mode=0755
+        mode=0777
       with_items:
         - "Downloads"
         - "Movies"
-        - "Series"
-
-
-
-   
+        - "Music"
+        - "TV Shows"
+        - "Documents"
+        - "Photos"

@@ -30,8 +30,10 @@ cidr_mask: "24"
 # Plex
 plex_apt_key: "http://shell.ninthgate.se/packages/shell-ninthgate-se-keyring.key"
 plex_repo: "deb http://shell.ninthgate.se/packages/debian wheezy main"
-plex_user: "plex"
-plex_group: "plex"
+
+# Owncloud
+owncloud_apt_key: "http://download.opensuse.org/repositories/isv:ownCloud:community/Debian_8.0/Release.key"
+owncloud_repo: "deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/ /"
 
 # Media
 media_folder: "/home/media"
