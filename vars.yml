@@ -17,6 +17,7 @@ nginx_repos:
 nginx_conf_files:
   - "host"
   - "vhosts"
+certificate_email: loric.brevet@gmail.com
 
 # Ajenti
 ajenti_apt_key: "http://repo.ajenti.org/debian/key"
