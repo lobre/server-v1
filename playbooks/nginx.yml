@@ -56,21 +56,3 @@
         creates=/etc/nginx/ssl/server.crt
       notify:
         - restart nginx
-
-    - name: Add Nginx host config from template
-      template: >
-        src=../templates/nginx_{{ item }}.j2
-        dest="/etc/nginx/sites-available/{{ item }}"
-      with_items: "{{ nginx_conf_files }}"
-      notify:
-        - restart nginx
-
-    - name: Link Nginx config to sites-enabled
-      file: >
-        src="/etc/nginx/sites-available/{{ item }}"
-        dest="/etc/nginx/sites-enabled/{{ item }}"
-        state=link
-      with_items: "{{ nginx_conf_files }}"
-      notify:
-        - restart nginx
-

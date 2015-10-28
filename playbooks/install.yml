@@ -27,4 +27,5 @@
       with_items: "{{ proxmox_templates }}"
 
 - include: nginx.yml
+- include: nginx_vhosts.yml
 - include: ajenti.yml

@@ -1,5 +1,5 @@
 ---
 
-- include: nginx.yml
+- include: nginx_vhosts.yml
 - include: firewall.yml
 
