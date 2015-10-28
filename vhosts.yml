@@ -14,7 +14,7 @@ vhosts:
         dest: ":8112"
         is_ssl: yes
       - prefix: "cloud"
-        dest: "/owncloud"
+        dest: ""
         is_ssl: yes
     nat:
       - src: "1001"
