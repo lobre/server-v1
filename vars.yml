@@ -34,6 +34,13 @@ plex_repo: "deb http://shell.ninthgate.se/packages/debian wheezy main"
 # Owncloud
 owncloud_apt_key: "http://download.opensuse.org/repositories/isv:ownCloud:community/Debian_8.0/Release.key"
 owncloud_repo: "deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/ /"
+owncloud_db_name: "owncloud"
+owncloud_db_user: "owncloud"
+owncloud_db_password: "media01"
 
 # Media
 media_folder: "/home/media"
+media_group: "media"
+owncloud_user: "www-data"
+deluge_user: "deluge"
+plex_user: "plex"

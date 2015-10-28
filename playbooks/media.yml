@@ -37,6 +37,9 @@
   hosts: media
   remote_user: root
 
+  vars_files:
+    - ../vars.yml
+
   handlers:
     - name: restart deluge
       service: name=deluge-web state=restarted
@@ -73,6 +76,9 @@
     - name: Update apt cache if needed
       apt: update_cache=yes cache_valid_time=3600
 
+    - name: Install ansible MySQL dependencies
+      apt: name=python-mysqldb state=present
+
   tasks:
     - name: Add Owncloud apt key
       apt_key: url={{ owncloud_apt_key }} state=present
@@ -89,7 +95,22 @@
       with_items:
         - owncloud
 
-- name: Shared media folders
+    - name: Install MySQL
+      apt: name={{ item }} state=present
+      with_items:
+        - mysql-server
+
+    - name: Create database
+      mysql_db: name={{ owncloud_db_name }} state=present
+
+    - name: Create owncloud database user
+      mysql_user: >
+        name="{{ owncloud_db_user }}"
+        password="{{ owncloud_db_password }}"
+        priv="{{ owncloud_db_name }}.*:ALL"
+        state=present
+
+- name: Create users groups and shared media folders
   hosts: media
   remote_user: root
 
@@ -97,12 +118,27 @@
     - ../vars.yml
 
   tasks:
+    - name: Create group
+      group: name="{{ media_group }}" state=present
+
+    - name: Create users
+      user:
+        name="{{ item }}"
+        group="{{ media_group }}"
+        createhome=no
+      with_items:
+        - "{{ owncloud_user }}"
+        - "{{ deluge_user }}"
+        - "{{ plex_user }}"
+
     - name: Create shared media folders
       file: >
         path="{{ media_folder }}/{{ item }}"
+        owner=root
+        group="{{ media_group }}"
         state=directory
         recurse=yes
-        mode=0777
+        mode=0770
       with_items:
         - "Downloads"
         - "Movies"
