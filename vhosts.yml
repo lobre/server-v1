@@ -16,6 +16,7 @@ vhosts:
       - prefix: "cloud"
         dest: ""
         is_ssl: yes
+        custom_config: client_max_body_size 100M;
     nat:
       - src: "1001"
         dest: "22"
