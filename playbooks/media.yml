@@ -137,10 +137,10 @@
         group="{{ apache_group }}"
         state=directory
         recurse=yes
-        mode=0775
+        mode=0770
 
     - debug: msg=|
         The install is over. Here are the manual steps missing:
         * Configure Plex by launching "ssh ip.address.of.server -L 8888:localhost:32400", and allowing remote access for manual port 32400
-        * Configure Owncloud. Add "umask(002);" to "/var/www/owncloud/config/config.php" and do a "chmod 775 -R {{ media_folder }}".
+        * Configure Owncloud. Add "umask(007);" to "/var/www/owncloud/config/config.php" and do a "chmod 770 -R {{ media_folder }}".
         * Configure Deluge to download in correct directory

@@ -6,7 +6,7 @@ After=network-online.target
 Type=simple
 User={{ deluge_user }}
 Group={{ apache_group }}
-UMask=002
+UMask=007
 
 ExecStart=/usr/bin/deluge-web
 
