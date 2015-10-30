@@ -40,7 +40,7 @@ owncloud_db_password: "media01"
 
 # Media
 media_folder: "/var/media"
-media_group: "www-data"
-owncloud_user: "www-data"
+apache_group: "www-data"
+apache_user: "www-data"
 deluge_user: "deluge"
 plex_user: "plex"
